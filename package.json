@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Aradhya-B/karaoke-party#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "crunker": "^0.3.0",
     "fs": "0.0.1-security",
     "media-split": "^5.1.2"
   }
