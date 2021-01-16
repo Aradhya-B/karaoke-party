@@ -1,0 +1,26 @@
+{
+  "name": "karaoke-party",
+  "version": "1.0.0",
+  "description": "hello world",
+  "main": "index.js",
+  "scripts": {
+    "io": "node server.js",
+    "client": "npm run start --prefix client",
+    "start": "concurrently  \"npm run client \" \"npm run io\"             "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aradhya-B/karaoke-party.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aradhya-B/karaoke-party/issues"
+  },
+  "homepage": "https://github.com/Aradhya-B/karaoke-party#readme",
+  "dependencies": {
+    "concurrently": "^5.3.0",
+    "express": "^4.17.1",
+    "socket.io": "^3.1.0"
+  }
+}
