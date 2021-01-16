@@ -4,7 +4,6 @@ import * as Cookies from "js-cookie";
 import "./meeting.css";
 import GroupCalling from "../../components/GroupCalling";
 import { AGORA_APP_ID } from "../../agora.config";
-import MemberList from "./messageList.js"
 
 import io from 'socket.io-client'
 const socket = io("http://localhost:8080");
@@ -106,7 +105,6 @@ class Meeting extends React.Component {
             />
           </div>
         </div>
-        <MemberList msglist={this.state.members}/>
       </div>
     );
   }
