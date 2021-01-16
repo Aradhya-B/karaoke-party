@@ -160,7 +160,7 @@ class AgoraCanvas extends React.Component {
   streamInit = (uid, attendeeMode, videoProfile, config) => {
     let defaultConfig = {
       streamID: uid,
-      audio: false,
+      audio: true,
       video: true,
       screen: false
     }

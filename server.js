@@ -15,4 +15,32 @@ const io = require("socket.io")(server, {
   },
 });
 
+class Member {
+  constructor(socketID, name) {
+    this.currentScore = 0;
+    this.totalScore = 0;
+    this.socketID = socketID;
+    this.name = name;
+  }
+}
+let members = new Map();
+
+io.on("connection", (socket) => {
+  console.log("New Member has joined");
+
+  socket.on("newMember", (socketID, name) => {
+    // socketId: {name: name, score:score}
+    members.set(name, new Member(socketID, name));
+
+    var newList = [...members.values()];
+    console.log(newList);
+
+    setInterval(() => io.emit("updateLeaderBoard", newList), 2000);
+  });
+
+  socket.on("newScore", (score) => {
+    io.emit("updateMemberScores", score);
+  });
+});
+
 server.listen(port, () => console.log(`Listening on port ${port}`));
