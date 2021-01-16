@@ -40,105 +40,18 @@ const tile_canvas = {
  * @prop transcode attendeeMode videoProfile channel baseMode
  */
 class AgoraCanvas extends React.Component {
-  constructor(props) {
-    super(props)
-    this.client = {}
-    this.localStream = {}
-    this.shareClient = {}
-    this.shareStream = {}
-    this.state = {
-      displayMode: 'pip',
-      streamList: [],
-      readyState: false,
-      gameActive: false,
-    }
-  }
-
-  componentWillMount() {
-    let $ = this.props
-    // init AgoraRTC local client
-    this.client = AgoraRTC.createClient({ mode: $.transcode })
-    this.client.init($.appId, () => {
-      console.log("AgoraRTC client initialized")
-      this.subscribeStreamEvents()
-      this.client.join($.appId, $.channel, $.uid, (uid) => {
-        console.log("User " + uid + " join channel successfully")
-        console.log('At ' + new Date().toLocaleTimeString())
-        // create local stream
-        // It is not recommended to setState in function addStream
-        console.log("videoProfile", $.videoProfile)
-        this.localStream = this.streamInit(uid, $.attendeeMode, $.videoProfile)
-        this.localStream.init(() => {
-          if ($.attendeeMode !== 'audience') {
-            this.addStream(this.localStream, true)
-            this.client.publish(this.localStream, err => {
-              console.log("Publish local stream error: " + err);
-            })
-          }
-          this.setState({ readyState: true })
-        },
-          err => {
-            console.log("getUserMedia failed", err)
-            this.setState({ readyState: true })
-          })
-      })
-    })
-  }
-
-  componentDidMount() {
-    // add listener to control btn group
-    let canvas = document.querySelector('#ag-canvas')
-    let btnGroup = document.querySelector('.ag-btn-group')
-    canvas.addEventListener('mousemove', () => {
-      if (global._toolbarToggle) {
-        clearTimeout(global._toolbarToggle)
-      }
-      btnGroup.classList.add('active')
-      global._toolbarToggle = setTimeout(function () {
-        btnGroup.classList.remove('active')
-      }, 2000)
-    })
-  }
-
-  // componentWillUnmount () {
-  //     // remove listener
-  //     let canvas = document.querySelector('#ag-canvas')
-  //     canvas.removeEventListener('mousemove')
-  // }
-
-  componentDidUpdate() {
-    // rerendering
-    let canvas = document.querySelector('#ag-canvas')
-    // pip mode (can only use when less than 4 people in channel)
-    if (this.state.displayMode === 'pip') {
-      let no = this.state.streamList.length
-      if (no > 4) {
-        this.setState({ displayMode: 'tile' })
-        return
-      }
-      console.log("stream list", this.state.streamList);
-      this.state.streamList.map((item, index) => {
-        let id = item.getId()
-        let dom = document.querySelector('#ag-item-' + id)
-        if (!dom) {
-          dom = document.createElement('section')
-          dom.setAttribute('id', 'ag-item-' + id)
-          dom.setAttribute('class', 'ag-item')
-          canvas.appendChild(dom)
-          item.play('ag-item-' + id)
+    constructor(props) {
+        super(props)
+        this.client = {}
+        this.localStream = {}
+        this.shareClient = {}
+        this.shareStream = {}
+        this.state = {
+            displayMode: 'pip',
+            streamList: [],
+            readyState: false,
+            gameActive: false,
         }
-        if (index === no - 1) {
-          dom.setAttribute('style', `grid-area: span 12/span 24/13/25; border-color: green`)
-        }
-        else {
-          dom.setAttribute('style', `grid-area: span 3/span 4/${4 + 3 * index}/25;
-                    z-index:1;width:calc(100% - 20px);height:calc(100% - 20px)`)
-        }
-
-        item.player.resize && item.player.resize()
-
-
-      })
     }
 
     componentWillMount() {
@@ -225,7 +138,7 @@ class AgoraCanvas extends React.Component {
                 if (index === no - 1) {
                     dom.setAttribute(
                         'style',
-                        `grid-area: span 12/span 24/13/25`
+                        `grid-area: span 12/span 24/13/25; border-color: green`
                     )
                 } else {
                     dom.setAttribute(
@@ -237,29 +150,6 @@ class AgoraCanvas extends React.Component {
 
                 item.player.resize && item.player.resize()
             })
-        }
-        // tile mode
-        else if (this.state.displayMode === 'tile') {
-            let no = this.state.streamList.length
-            this.state.streamList.map((item, index) => {
-                let id = item.getId()
-                let dom = document.querySelector('#ag-item-' + id)
-                if (!dom) {
-                    dom = document.createElement('section')
-                    dom.setAttribute('id', 'ag-item-' + id)
-                    dom.setAttribute('class', 'ag-item')
-                    canvas.appendChild(dom)
-                    item.play('ag-item-' + id)
-                }
-                dom.setAttribute(
-                    'style',
-                    `grid-area: ${tile_canvas[no][index]}`
-                )
-                item.player.resize && item.player.resize()
-            })
-        }
-        // screen share mode (tbd)
-        else if (this.state.displayMode === 'share') {
         }
     }
 
