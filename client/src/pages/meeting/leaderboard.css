@@ -1,0 +1,27 @@
+
+    #leaderBoard {
+
+      
+        position: fixed;
+        top: 0px;
+        right: 0px;
+        width: 15%;
+        height: 30%;
+    
+    }
+
+    #textbox{
+        padding-bottom: 10%;
+    }
+
+    #leaderBoardText{ 
+        font-size: x-large;
+        margin-bottom: 8%;
+    }
+
+    .alignleft {
+        float: left;
+    }
+    .alignright {
+        float: right;
+    }
