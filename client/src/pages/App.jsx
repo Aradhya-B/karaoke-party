@@ -5,6 +5,7 @@ import 'bulma/css/bulma.css'
 import './App.css'
 import Index from './index'
 import Meeting from './meeting'
+import SongViewer from './SongViewer'
 
 class App extends Component {
   render() {
@@ -13,6 +14,7 @@ class App extends Component {
         <div className="full">
           <Route exact path="/" component={Index} />
           <Route path="/meeting" component={Meeting} />
+          <Route path="/lrc" component={SongViewer} />
         </div>
       </Router>
     )

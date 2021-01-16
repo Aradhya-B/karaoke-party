@@ -4,61 +4,37 @@ import * as Cookies from "js-cookie";
 import "./meeting.css";
 import GroupCalling from "../../components/GroupCalling";
 import { AGORA_APP_ID } from "../../agora.config";
+import MemberList from "./memberList.js"
 
 import io from 'socket.io-client'
-const socket = io("http://localhost:8080");
+const socket = io("http://localhost:8080/",{transports: ['websocket', 'polling', 'flashsocket'],
+'sync disconnect on unload': true,
+});
 
 class Meeting extends React.Component {
 
   state = {
-    members: [],
+  members: [],
    score:0,
 
   }
 
     componentDidMount() {
       const username = Cookies.get("username");
-        //Logic when someone joins
-      socket.on('onJoin', (data) => {
-          //ToDo -> Display special message, update score board
 
-      })
-      // Logic When someone leaves
-      socket.on('onLeave', (data) => {
-      //ToDo -> remove score from score board
-    })
-
-      socket.on('gameStarted', () => {
-        console.log("STARTING GAME!");
-        if (username !== 'host') {
-            console.log("game started, and this is host")
-        }
-      })
-
-    // Logic to update a score for a particular user
-    socket.on('updateLeaderboard', (data) => {
-      //ToDo -> Given name of user, show special message to show someone got the points
+    //THIS WILL BE HIT WHEN A  MEMBER SENDS A NEW SCORE
+    socket.on('updateMemberScores', (data) => {
       this.setState({members:data})
-    
     })
 
+    socket.on('updateLeaderBoard', (data) => {
+      this.setState({members:data})
+    })
 
+    
+    socket.emit("newMember", socket.id, username);
 
-    //Notify all connected members of my name and SocketId and score
-    // const username = Cookies.get("username");
-      if (username !== "host") {
-          console.log("socketID", socket.id);
-          socket.emit("newMember", socket.id, username);
-      }
-
-  }
-
-  increaseScore = (value) => {
-    //This funciton will be called after the result of the funciton is complete
-    socket.emit("newScore", socket.id, Cookies.get("username"),  value);
-  }
-
-
+    }
   constructor(props) {
     super(props);
   
@@ -74,9 +50,12 @@ class Meeting extends React.Component {
     }
   }
 
-
-
   render() {
+
+    const increaseScore = (value) => {
+      socket.emit("newScore", socket.id, Cookies.get("username"),  value);
+    }
+
     return (
       <div className="wrapper meeting">
         <div className="ag-header">
@@ -105,6 +84,7 @@ class Meeting extends React.Component {
             />
           </div>
         </div>
+        <MemberList memberList={this.state.members}/>
       </div>
     );
   }
