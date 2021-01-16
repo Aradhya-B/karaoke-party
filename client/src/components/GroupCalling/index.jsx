@@ -29,7 +29,7 @@ class AgoraCanvas extends React.Component {
     this.shareClient = {}
     this.shareStream = {}
     this.state = {
-      displayMode: 'tile',
+      displayMode: 'pip',
       streamList: [],
       readyState: false,
       gameActive: false,
@@ -110,7 +110,7 @@ class AgoraCanvas extends React.Component {
           item.play('ag-item-' + id)
         }
         if (index === no - 1) {
-          dom.setAttribute('style', `grid-area: span 12/span 24/13/25`)
+          dom.setAttribute('style', `grid-area: span 12/span 24/13/25; border-color: green`)
         }
         else {
           dom.setAttribute('style', `grid-area: span 3/span 4/${4 + 3 * index}/25;
