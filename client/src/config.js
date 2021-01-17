@@ -1,1 +1,1 @@
-export const URL = 'https://shaggy-baboon-86.loca.lt'
+export const URL = 'http://bad-cobra-55.loca.lt/'

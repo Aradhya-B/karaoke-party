@@ -1,4 +1,4 @@
-import BlindingLights from './songs/blinding_lights.mp3'
+import BlindingLights from './songs/blinding_lights_inst.mp3'
 
 export default [
     {
