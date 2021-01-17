@@ -3,31 +3,24 @@ from aubio import source, pitch, sink, digital_filter
 from os import path
 from scipy.io import wavfile
 
-AUDIO_FILE = "../score_testing/origClips/eddy_singing.wav"
 REAL_AUDIO = "../score_testing/clips/I said, ooh, I'm blinded by the lights [0100.82].wav"
-RATE = 44100
 RECORD_SECONDS = 240
 
 
-def calculateScore():
-    userPitches = getPitch(AUDIO_FILE)
-    realPitches = getPitch(REAL_AUDIO)
-    realNotes = convertPitchesToNotes(realPitches)
-    userNotes = convertPitchesToNotes(userPitches)
+def calculateScore(audio_file_one, audio_file_two):
+    file_one_pitches = getPitch(audio_file_one)
+    file_two_pitches = getPitch(audio_file_two)
     score = min(100, round(pitchAlgorithm(userPitches, realPitches)))
     return score
 
 
 def getPitch(filename):
-    from aubio import source, pitch
-    downsample = 1
-    samplerate = RATE//downsample
-    win_s = 4096 // downsample  # fft size
-    hop_s = 512 // downsample  # hop size
-    s = source(filename, samplerate, hop_s)
-    samplerate = s.samplerate
+    # buffer size (window size) - higher is good for lower frequencies
+    win_s = 4096
+    hop_s = 512
+    s = source(filename)  # wav samplerate is 44.1kH
     tolerance = 0.8
-    pitch_o = pitch("yin", win_s, hop_s, samplerate)
+    pitch_o = pitch("yin", win_s)
     pitch_o.set_unit("midi")
     pitch_o.set_tolerance(tolerance)
     pitches, confidences = [], []
@@ -38,16 +31,16 @@ def getPitch(filename):
         pitch = pitch_o(samples)[0]
         pitch = round(pitch, 3)
         confidence = pitch_o.get_confidence()
-        if confidence < 0.40:
+        if confidence < 0.60:
             pitch = 0
         pitches += [pitch]
         confidences += [confidence]
         total_frames += read
         if read < hop_s:
             break
-    concat = 4
-    pitches = pitches[concat:]
-    confidences = confidences[concat:]
+    # concat = 4
+    # pitches = pitches[concat:]
+    # confidences = confidences[concat:]
     return pitches
 
 
@@ -55,10 +48,9 @@ def convertPitchesToNotes(pitches):
     pitchDict = makePitchMap()
     notes = []
     for pitch in pitches:
-        if int(round(pitch)) in pitchDict.values():
-            for key in pitchDict:
-                if int(round(pitch)) == pitchDict[key]:
-                    notes += [key]
+        rounded_pitch = int(round(pitch))
+        if rounded_pitch in pitchDict:
+            notes += [pitchDict[rounded_pitch]]
         else:
             notes += [0]
     return notes
@@ -67,31 +59,44 @@ def convertPitchesToNotes(pitches):
 def makePitchMap():
     dictionary = {}
     for i in range(0, 7):
-        key = 'C' + str(i + 1)
-        dictionary[key] = 24 + i*12
-        key = 'C#' + str(i + 1)
-        dictionary[key] = 25 + i*12
-        key = 'D' + str(i + 1)
-        dictionary[key] = 26 + i*12
-        key = 'D#' + str(i + 1)
-        dictionary[key] = 27 + i*12
-        key = 'E' + str(i + 1)
-        dictionary[key] = 28 + i*12
-        key = 'F' + str(i + 1)
-        dictionary[key] = 29 + i*12
-        key = 'F#' + str(i + 1)
-        dictionary[key] = 30 + i*12
-        key = 'G' + str(i + 1)
-        dictionary[key] = 31 + i*12
-        key = 'G#' + str(i + 1)
-        dictionary[key] = 32 + i*12
-        key = 'A' + str(i + 1)
-        dictionary[key] = 33 + i*12
-        key = 'A#' + str(i + 1)
-        dictionary[key] = 34 + i*12
-        key = 'B' + str(i + 1)
-        dictionary[key] = 35 + i*12
-    dictionary['C8'] = 108
+        key = 24 + i*12
+        dictionary[key] = 'C' + str(i + 1)
+
+        key = 25 + i*12
+        dictionary[key] = 'C#' + str(i + 1)
+
+        key = 26 + i*12
+        dictionary[key] = 'D' + str(i + 1)
+
+        key = 27 + i*12
+        dictionary[key] = 'D#' + str(i + 1)
+
+        key = 28 + i*12
+        dictionary[key] = 'E' + str(i + 1)
+
+        key = 29 + i*12
+        dictionary[key] = 'F' + str(i + 1)
+
+        key = 30 + i*12
+        dictionary[key] = 'F#' + str(i + 1)
+
+        key = 31 + i*12
+        dictionary[key] = 'G' + str(i + 1)
+
+        key = 32 + i*12
+        dictionary[key] = 'G#' + str(i + 1)
+
+        key = 33 + i*12
+        dictionary[key] = 'A' + str(i + 1)
+
+        key = 34 + i*12
+        dictionary[key] = 'A#' + str(i + 1)
+
+        key = 35 + i*12
+        dictionary[key] = 'B' + str(i + 1)
+
+    dictionary[108] = 'C8'
+
     return dictionary
 
 
@@ -148,10 +153,10 @@ def reduceWhiteNoise(userArray, realArray):
     # 20 samples per second
     interval = 10
     # beginning case
-    if (userArray[0] != 0 and userArray[1:5] != [0]*4):
+    if (userArray[:5] != [0]*5):
         userArray[0] = 0
     # end case
-    if (userArray[-1] != 0 and userArray[-5:-1] != [0]*4):
+    if (userArray[-5:] != [0]*5):
         userArray[-1] = 0
     for i in range(len(userArray)-interval):
         if (userArray[i:i+interval//2-1] == [0]*(interval//2-1) and userArray[i+interval//2+1: i+interval] == [0]*(interval//2-1)):
@@ -159,8 +164,3 @@ def reduceWhiteNoise(userArray, realArray):
                 userArray[i+interval//2-1] = 0
                 userArray[i+interval//2] = 0
     return userArray
-
-
-if __name__ == '__main__':
-    myscore = calculateScore()
-    print(myscore)
