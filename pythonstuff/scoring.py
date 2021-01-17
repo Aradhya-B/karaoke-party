@@ -1,20 +1,22 @@
 import aubio
-from aubio import source, pitch, sink, digital_filter
 from os import path
 from scipy.io import wavfile
 
-REAL_AUDIO = "../score_testing/clips/I said, ooh, I'm blinded by the lights [0100.82].wav"
+# REAL_AUDIO = "../score_testing/clips/I said, ooh, I'm blinded by the lights [0100.82].wav"
+# USER_AUDIO = "../score_testing/clips/Hey, hey, hey [0122.48].wav"
+MISSING_PITCH_PLACEHOLDER = 0
 RECORD_SECONDS = 240
 
 
 def calculateScore(audio_file_one, audio_file_two):
     file_one_pitches = getPitch(audio_file_one)
     file_two_pitches = getPitch(audio_file_two)
-    score = min(100, round(pitchAlgorithm(userPitches, realPitches)))
+    score = min(100, round(pitchAlgorithm(file_one_pitches, file_two_pitches)))
     return score
 
 
 def getPitch(filename):
+    from aubio import pitch, source
     # buffer size (window size) - higher is good for lower frequencies
     win_s = 4096
     hop_s = 512
@@ -38,9 +40,6 @@ def getPitch(filename):
         total_frames += read
         if read < hop_s:
             break
-    # concat = 4
-    # pitches = pitches[concat:]
-    # confidences = confidences[concat:]
     return pitches
 
 
@@ -52,7 +51,7 @@ def convertPitchesToNotes(pitches):
         if rounded_pitch in pitchDict:
             notes += [pitchDict[rounded_pitch]]
         else:
-            notes += [0]
+            notes += [MISSING_PITCH_PLACEHOLDER]
     return notes
 
 
@@ -121,32 +120,16 @@ def pitchAlgorithm(userPitches, realPitches):
     total = min(len(userNotes), len(realNotes))
 
     for i in range(0, len(realNotes)-interval, interval):
-        # window for freq: 1/3 of a second
         for j in range(-1*interval//2, interval//2, 1):
-            if realNotes[i+j] == 0 and userNotes[i+j] == 0:
-                score += 1
-            elif realNotes[i+j] == 0 or userNotes[i+j] == 0:
+            if realNotes[i+j] == 0 or userNotes[i+j] == 0:
                 score += 1
             elif (compareNotes(realNotes[i], userNotes[i+j])):
                 score += 1
-    # for i in range(min(len(userNotes), len(realNotes) )):
-        # if (not isinstance(userNotes[i], str) and isinstance(realNotes[i], str)):
-        #	total -=1
-        # if compareNotes(realNotes[i], userNotes[i]):
-        #	score+=1
     return score/total*100
 
 
 def compareNotes(A, B):
-    if isinstance(A, float):
-        A = int(A)
-    if isinstance(B, float):
-        B = int(B)
-    if (A == 0 and B == 0):
-        return True
-    elif isinstance(A, str) and isinstance(B, str) and A[0:2] == B[0:2]:
-        return True
-    return False
+    return A == B
 
 
 def reduceWhiteNoise(userArray, realArray):
