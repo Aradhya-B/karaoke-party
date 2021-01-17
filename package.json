@@ -4,7 +4,7 @@
   "description": "hello world",
   "main": "index.js",
   "scripts": {
-    "io": "node server.js",
+    "io": "python server.py --prefix server",
     "client": "npm run start --prefix client",
     "start": "concurrently  \"npm run client \" \"npm run io\"             "
   },
