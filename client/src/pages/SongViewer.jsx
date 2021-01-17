@@ -1,10 +1,11 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Lrc, useLrc } from '@mebtte/react-lrc'
 
 import musicList from '../assets/music'
 import { StyledApp, MusicList, Action } from './style'
 import Music from './music'
 import sound from '../assets/songs/blinding_lights.mp3'
+import axios from 'axios'
 const lrcStyle = {
     flex: 1,
     minHeight: 0,
@@ -19,6 +20,8 @@ const App = () => {
     )
     // console.log({ blLrc })
     const lrcRef = useRef()
+    const currentLineLrcRef = useRef()
+
     const lineRenderer = useCallback(({ lrcLine, index, active }) => {
         const { content } = lrcLine
         return (
@@ -35,9 +38,110 @@ const App = () => {
             </div>
         )
     }, [])
-    const onCurrentLineChange = useCallback((line) => console.log(line), [])
+    const onCurrentLineChange = useCallback((line) => {
+        console.log({ line })
+        if (line.lrcLine) {
+            // mediaRecorder.stop()
+            currentLineLrcRef.current = line.lrcLine
+            // mediaRecorder.start()
+        }
+    }, [])
+
+    let mediaRecorder
+    useEffect(() => {
+        if (navigator.mediaDevices) {
+            console.log('getUserMedia supported.')
+
+            const constraints = { audio: true }
+            let chunks = []
+
+            navigator.mediaDevices
+                .getUserMedia(constraints)
+                .then(function (stream) {
+                    mediaRecorder = new MediaRecorder(stream, {
+                        mimeType: 'audio/webm',
+                    })
+
+                    // mediaRecorder.start()
+
+                    mediaRecorder.ondataavailable = function (e) {
+                        chunks.push(e.data)
+                    }
+
+                    mediaRecorder.onstop = function (e) {
+                        console.log(
+                            'data available after MediaRecorder.stop() called.'
+                        )
+
+                        var clipName = prompt(
+                            'Enter a name for your sound clip'
+                        )
+
+                        var clipContainer = document.createElement('article')
+                        var clipLabel = document.createElement('p')
+                        var audio = document.createElement('audio')
+                        var deleteButton = document.createElement('button')
+
+                        clipContainer.classList.add('clip')
+                        audio.setAttribute('controls', '')
+                        deleteButton.innerHTML = 'Delete'
+                        clipLabel.innerHTML = clipName
+
+                        clipContainer.appendChild(audio)
+                        clipContainer.appendChild(clipLabel)
+                        clipContainer.appendChild(deleteButton)
+                        document
+                            .getElementById('top')
+                            .appendChild(clipContainer)
+
+                        audio.controls = true
+
+                        var blob = new Blob(chunks, {
+                            type: 'audio/ogg; codecs=opus',
+                        })
+                        chunks = []
+
+                        console.log({ currentLineLrcRef })
+                        const formData = new FormData()
+                        formData.append('file', blob)
+                        // formData.append(
+                        //     'clip-name',
+                        //     currentLineLrcRef.current.content
+                        // )
+                        // formData.append(
+                        //     'timestamp',
+                        //     millisToMinutesAndSeconds(
+                        //         currentLineLrcRef.current.millisecond
+                        //     )
+                        // )
+
+                        const config = {
+                            headers: {
+                                'content-type': 'multipart/form-data',
+                            },
+                        }
+                        return axios.post(
+                            'http://localhost:8080/upload',
+                            formData,
+                            config
+                        )
+
+                        chunks = []
+                        console.log('recorder stopped')
+                    }
+                })
+        }
+    }, [])
 
     const currentMusic = musicList[0]
+
+    const record = () => {
+        mediaRecorder.start()
+    }
+
+    const stop = () => {
+        mediaRecorder.stop()
+    }
 
     return (
         <StyledApp
@@ -47,13 +151,14 @@ const App = () => {
                 justifyContent: 'center',
             }}
         >
-            <div className="top">
+            <div className="top" id="top">
                 <Action>
                     <audio
                         src={currentMusic.src}
                         controls
                         onTimeUpdate={onTimeUpdate}
                         id="song"
+                        // onplay={() => record()}
                     />
                     <br />
                     <button
@@ -65,6 +170,12 @@ const App = () => {
                         }
                     >
                         get current line
+                    </button>
+                    <button type="button" onClick={() => record()}>
+                        record
+                    </button>
+                    <button type="button" onClick={() => stop()}>
+                        stop rec
                     </button>
                     <button
                         type="button"
@@ -84,6 +195,12 @@ const App = () => {
             />
         </StyledApp>
     )
+}
+
+function millisToMinutesAndSeconds(millis) {
+    var minutes = Math.floor(millis / 60000)
+    var seconds = ((millis % 60000) / 1000).toFixed(0)
+    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds
 }
 
 export default App

@@ -2,3 +2,6 @@ flask
 flask-socketio
 flask-cors
 eventlet
+aubio
+scipy
+ffmpeg-python

@@ -1,15 +1,15 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import time
+from scoring import calculateScore
+import ffmpeg
 
-
-    
 app = Flask(__name__)
 CORS(app)
 
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, cors_allowed_origins="*", logger=True, manage_session=False)
+socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True, manage_session=False,)
 
 class Member:
     def __init__(self, sid, name):
@@ -24,7 +24,30 @@ members = {}
 
 @app.route('/')
 def index():
+    print("hitting index")
     return render_template('index.html')
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    # print(request)
+    print("uploading")
+    # file = request.files['file']
+    # clipname = request.files['clip-name']
+    # timestamp = request.files['timestamp']
+    # clipname= "a"
+    # timestamp="b"
+
+    # file.save(f'./recs/webm/{clipname}.webm')
+
+    # stream = ffmpeg.input(f'./recs/webm/{clipname}.webm')
+    # stream = ffmpeg.output(stream, f'./recs/wav/{clipname}.wav')
+    # ffmpeg.run(stream, overwrite_output=True)
+
+    # score = calculateScore(f'./recs/wav/{clipname}.wav', f'./recs/wav/{clipname}.wav')
+    # print(score)
+
+    return "good"
+
 
 @socketio.on('newMember')
 def new_member(sid, name):
@@ -42,7 +65,6 @@ def new_member(sid, name):
     print("updating leaderboard")
 
     emit('updateLeaderBoard', json_members_list, broadcast=True)
-
 
 
 

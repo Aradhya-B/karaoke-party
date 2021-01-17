@@ -5,6 +5,7 @@
   "dependencies": {
     "@mebtte/react-lrc": "^1.0.2",
     "agora-rtc-sdk": "^2.6.1",
+    "axios": "^0.21.1",
     "bulma": "^0.6.1",
     "js-cookie": "^2.2.0",
     "react": "^16.8.6",
