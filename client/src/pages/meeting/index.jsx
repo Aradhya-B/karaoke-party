@@ -9,12 +9,12 @@ import SongViewer from './../SongViewer'
 
 import io from 'socket.io-client'
 
-const socket = io('https://karaoke-party-htn.ue.r.appspot.com/', {
+// const socket = io('https://karaoke-party-htn.ue.r.appspot.com/', {
+const socket = io('http://localhost:8080/', {
     transports: ['websocket'],
     // transports: ['websocket', 'polling', 'flashsocket'],
     // 'sync disconnect on unload': true,
 })
-// const socket = io('http://localhost:8080/')
 
 class Meeting extends React.Component {
     state = {
