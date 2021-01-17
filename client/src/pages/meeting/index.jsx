@@ -31,6 +31,7 @@ class Meeting extends React.Component {
         })
 
         socket.on('updateLeaderBoard', (data) => {
+            console.log(data)
             this.setState({ members: data })
         })
 
