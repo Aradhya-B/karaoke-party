@@ -27,24 +27,27 @@ def index():
     print("hitting index")
     return render_template('index.html')
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     # print(request)
     print("uploading")
-    # file = request.files['file']
-    # clipname = request.files['clip-name']
+    file = request.files['file']
+    # clipname = request.form['name']
+    clipname = request.form['index']
+
+    print(clipname)
     # timestamp = request.files['timestamp']
     # clipname= "a"
     # timestamp="b"
 
-    # file.save(f'./recs/webm/{clipname}.webm')
+    file.save(f'./recs/webm/{clipname}.webm')
 
-    # stream = ffmpeg.input(f'./recs/webm/{clipname}.webm')
-    # stream = ffmpeg.output(stream, f'./recs/wav/{clipname}.wav')
-    # ffmpeg.run(stream, overwrite_output=True)
+    stream = ffmpeg.input(f'./recs/webm/{clipname}.webm')
+    stream = ffmpeg.output(stream, f'./recs/wav/{clipname}.wav')
+    ffmpeg.run(stream, overwrite_output=True)
 
-    # score = calculateScore(f'./recs/wav/{clipname}.wav', f'./recs/wav/{clipname}.wav')
-    # print(score)
+    score = calculateScore(f'./recs/wav/{clipname}.wav', f'./recs/wav/{clipname}.wav')
+    print(score)
 
     return "good"
 

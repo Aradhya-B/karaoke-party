@@ -11,6 +11,8 @@ const lrcStyle = {
     minHeight: 0,
 }
 
+let weeknd
+
 const App = () => {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [currentTime, setCurrentTime] = useState(0)
@@ -21,6 +23,7 @@ const App = () => {
     // console.log({ blLrc })
     const lrcRef = useRef()
     const currentLineLrcRef = useRef()
+    const lineIndexRef = useRef()
 
     const lineRenderer = useCallback(({ lrcLine, index, active }) => {
         const { content } = lrcLine
@@ -39,11 +42,12 @@ const App = () => {
         )
     }, [])
     const onCurrentLineChange = useCallback((line) => {
-        console.log({ line })
         if (line.lrcLine) {
-            // mediaRecorder.stop()
-            currentLineLrcRef.current = line.lrcLine
-            // mediaRecorder.start()
+            console.log({ line })
+            if (mediaRecorder.state === 'recording') mediaRecorder.stop()
+            lineIndexRef.current = line.index
+
+            mediaRecorder.start()
         }
     }, [])
 
@@ -73,29 +77,30 @@ const App = () => {
                             'data available after MediaRecorder.stop() called.'
                         )
 
-                        var clipName = prompt(
-                            'Enter a name for your sound clip'
-                        )
+                        // var clipName = prompt(
+                        //     'Enter a name for your sound clip'
+                        // )
 
-                        var clipContainer = document.createElement('article')
-                        var clipLabel = document.createElement('p')
-                        var audio = document.createElement('audio')
-                        var deleteButton = document.createElement('button')
+                        // var clipContainer = document.createElement('article')
+                        // var clipLabel = document.createElement('p')
+                        // var audio = document.createElement('audio')
+                        // var deleteButton = document.createElement('button')
 
-                        clipContainer.classList.add('clip')
-                        audio.setAttribute('controls', '')
-                        deleteButton.innerHTML = 'Delete'
-                        clipLabel.innerHTML = clipName
+                        // clipContainer.classList.add('clip')
+                        // audio.setAttribute('controls', '')
+                        // deleteButton.innerHTML = 'Delete'
+                        // clipLabel.innerHTML = clipName
 
-                        clipContainer.appendChild(audio)
-                        clipContainer.appendChild(clipLabel)
-                        clipContainer.appendChild(deleteButton)
-                        document
-                            .getElementById('top')
-                            .appendChild(clipContainer)
+                        // clipContainer.appendChild(audio)
+                        // clipContainer.appendChild(clipLabel)
+                        // clipContainer.appendChild(deleteButton)
+                        // document
+                        //     .getElementById('top')
+                        //     .appendChild(clipContainer)
 
-                        audio.controls = true
+                        // audio.controls = true
 
+                        // console.log({ chunks })
                         var blob = new Blob(chunks, {
                             type: 'audio/ogg; codecs=opus',
                         })
@@ -104,15 +109,26 @@ const App = () => {
                         console.log({ currentLineLrcRef })
                         const formData = new FormData()
                         formData.append('file', blob)
+                        formData.append(
+                            'index',
+                            lineIndexRef.current.toString()
+                        )
                         // formData.append(
-                        //     'clip-name',
-                        //     currentLineLrcRef.current.content
+                        //     'name',
+                        //     `${
+                        //         // currentLineLrcRef.current.content
+                        //         weeknd.content
+                        //     } [${millisToMinutesAndSeconds(
+                        //         // currentLineLrcRef.current.millisecond
+                        //         weeknd.millisecond
+                        //     )}]`
                         // )
+
                         // formData.append(
                         //     'timestamp',
-                        //     millisToMinutesAndSeconds(
-                        //         currentLineLrcRef.current.millisecond
-                        //     )
+                        // millisToMinutesAndSeconds(
+                        //     currentLineLrcRef.current.millisecond
+                        // )
                         // )
 
                         const config = {
@@ -125,9 +141,6 @@ const App = () => {
                             formData,
                             config
                         )
-
-                        chunks = []
-                        console.log('recorder stopped')
                     }
                 })
         }
@@ -158,7 +171,7 @@ const App = () => {
                         controls
                         onTimeUpdate={onTimeUpdate}
                         id="song"
-                        // onplay={() => record()}
+                        // onPlay={() => record()}
                     />
                     <br />
                     <button
