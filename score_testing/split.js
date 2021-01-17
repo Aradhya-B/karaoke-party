@@ -8,7 +8,7 @@ for (i in lrc) {
 lrc.pop();
 
 let MediaSplit = require('media-split');
-let split = new MediaSplit({ input: 'blinding_lights.mp3', sections: lrc });
+let split = new MediaSplit({ input: 'origClips/blinding_lights_aca.mp3', sections: lrc, format: 'wav'});
 
 split.parse().then((sections) => {
   for (let section of sections) {
