@@ -4,7 +4,7 @@ import { Lrc, useLrc } from '@mebtte/react-lrc'
 import musicList from '../assets/music'
 import { StyledApp, MusicList, Action } from './style'
 import Music from './music'
-import sound from '../assets/songs/blinding_lights.mp3'
+import sound from '../assets/songs/blinding_lights_inst.mp3'
 import axios from 'axios'
 import { URL } from '../config'
 

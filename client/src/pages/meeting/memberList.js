@@ -7,7 +7,7 @@ const MessageList = (props) => {
 
                 //element.style
                 el.style =
-                    'position:absolute; color:white; font-size:50px; top:5px; right:10px;background-color:black; border-radius:10px; padding-left:8px; padding-right:8px; inner-html: '
+                    'position:absolute; color:white; font-size:25px; top:5px; right:10px;background-color:black; border-radius:10px; padding-left:8px; padding-right:8px; inner-html: '
                 el.innerHTML = `${member.score}`
                 el.style.zIndex = '99'
                 document.querySelector('#player_' + member.name).appendChild(el)
