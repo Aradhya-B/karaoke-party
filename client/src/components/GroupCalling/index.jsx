@@ -135,18 +135,11 @@ class AgoraCanvas extends React.Component {
                     canvas.appendChild(dom)
                     item.play('ag-item-' + id)
                 }
-                if (index === no - 1) {
-                    dom.setAttribute(
-                        'style',
-                        `grid-area: span 12/span 24/13/25; border-color: green`
-                    )
-                } else {
-                    dom.setAttribute(
-                        'style',
-                        `grid-area: span 3/span 4/${4 + 3 * index}/25;
+                dom.setAttribute(
+                    'style',
+                    `grid-area: span 3/span 4/${4 + 3 * index}/25;
                     z-index:1;width:calc(100% - 20px);height:calc(100% - 20px)`
-                    )
-                }
+                )
 
                 item.player.resize && item.player.resize()
             })
