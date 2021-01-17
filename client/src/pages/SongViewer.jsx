@@ -51,9 +51,9 @@ const App = () => {
                 <Action>
                     <audio
                         src={currentMusic.src}
-                        autoPlay
                         controls
                         onTimeUpdate={onTimeUpdate}
+                        id="song"
                     />
                     <br />
                     <button

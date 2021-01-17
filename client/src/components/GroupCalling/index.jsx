@@ -301,7 +301,7 @@ class AgoraCanvas extends React.Component {
 
     togglePlay = (e) => {
         if (!this.state.gameActive) {
-            this.props.socket.emit('start')
+            this.props.socket.emit('hostStart')
         } else {
             this.props.socket.emit('pause')
         }

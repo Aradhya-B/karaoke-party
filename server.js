@@ -41,6 +41,10 @@ io.on("connection", (socket) => {
   socket.on("newScore", (score) => {
     io.emit("updateMemberScores", score);
   });
+
+  socket.on("hostStart", () => {
+    io.emit("gameStart")
+  })
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
