@@ -4,6 +4,8 @@ from flask_cors import CORS
 import time
 from scoring import calculateScore
 import ffmpeg
+from blarr import blinding_lights_arr
+
 
 app = Flask(__name__)
 CORS(app)
@@ -15,10 +17,9 @@ class Member:
     def __init__(self, sid, name):
         self.name = name 
         self.sid = sid
-        self.current_score = 0
-        self.total_score = 0
+        self.score = 0
     def toJSON(self):
-        return {"name": self.name, "socketID": self.sid, "currentScore": self.current_score, "totalScore": self.total_score}
+        return {"name": self.name, "socketID": self.sid, "score": self.score}
 
 members = {}
 
@@ -33,21 +34,32 @@ def upload_file():
     print("uploading")
     file = request.files['file']
     # clipname = request.form['name']
-    clipname = request.form['index']
+    index = int(request.form['index'])
+    username = int(request.form['username'])
 
-    print(clipname)
-    # timestamp = request.files['timestamp']
-    # clipname= "a"
-    # timestamp="b"
+    if (index > 1):
+        adjusted = index - 1
+        clipname = blinding_lights_arr[adjusted]
 
-    file.save(f'./recs/webm/{clipname}.webm')
+        file.save(f'./recs/webm/{clipname}.webm')
 
-    stream = ffmpeg.input(f'./recs/webm/{clipname}.webm')
-    stream = ffmpeg.output(stream, f'./recs/wav/{clipname}.wav')
-    ffmpeg.run(stream, overwrite_output=True)
+        stream = ffmpeg.input(f'./recs/webm/{clipname}.webm')
+        stream = ffmpeg.output(stream, f'./recs/wav/{clipname}.wav')
+        ffmpeg.run(stream, overwrite_output=True)
 
-    score = calculateScore(f'./recs/wav/{clipname}.wav', f'./recs/wav/{clipname}.wav')
-    print(score)
+        score = calculateScore(f'./recs/wav/{clipname}.wav', f'./clips/{clipname}.wav')
+        
+        print(score)
+        members[username].score += score
+        print(username + "'s new score is: " + str(score))
+    
+
+        members_list = list(members.values())
+        json_members_list = []
+        for member in members_list:
+            json_members_list.append(member.toJSON())
+        
+        emit('updateLeaderBoard', json_members_list, broadcast=True)
 
     return "good"
 

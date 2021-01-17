@@ -5,7 +5,7 @@ from scipy.io import wavfile
 # REAL_AUDIO = "../score_testing/clips/I said, ooh, I'm blinded by the lights [0100.82].wav"
 # USER_AUDIO = "../score_testing/clips/Hey, hey, hey [0122.48].wav"
 MISSING_PITCH_PLACEHOLDER = 0
-RECORD_SECONDS = 240
+RECORD_SECONDS = 20
 
 
 def calculateScore(audio_file_one, audio_file_two):

@@ -11,9 +11,7 @@ const lrcStyle = {
     minHeight: 0,
 }
 
-let weeknd
-
-const App = () => {
+const SongViewer = ({ username }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [currentTime, setCurrentTime] = useState(0)
     const onTimeUpdate = useCallback(
@@ -32,7 +30,8 @@ const App = () => {
                 style={{
                     textAlign: 'center',
                     padding: '10px 0',
-                    color: active ? 'green' : 'inherit',
+                    fontSize: '3vw',
+                    color: active ? 'yellow' : 'lightgrey',
                     transform: `scale(${active ? 1.2 : 1})`,
                     transition: 'transform 300ms',
                 }}
@@ -113,6 +112,7 @@ const App = () => {
                             'index',
                             lineIndexRef.current.toString()
                         )
+                        formData.append('username', username)
                         // formData.append(
                         //     'name',
                         //     `${
@@ -216,4 +216,4 @@ function millisToMinutesAndSeconds(millis) {
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds
 }
 
-export default App
+export default SongViewer

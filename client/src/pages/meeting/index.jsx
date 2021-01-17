@@ -89,7 +89,7 @@ class Meeting extends React.Component {
                     </div>
                 </div>
                 <MemberList memberList={this.state.members} />
-                <SongViewer />
+                <SongViewer username={this.username} />
             </div>
         )
     }
