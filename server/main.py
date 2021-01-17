@@ -103,7 +103,7 @@ def test_disconnect():
 
 @socketio.on("hostStart")
 def start():
-    emit('gameStart', broadcase=True)
+    socketio.emit('gameStart',None, broadcase=True)
 
 
 if __name__ == '__main__':
