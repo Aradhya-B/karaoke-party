@@ -8,9 +8,11 @@ import MemberList from './memberList.js'
 import SongViewer from './../SongViewer'
 
 import io from 'socket.io-client'
+import { URL } from '../../config'
 
-// const socket = io('https://karaoke-party-htn.ue.r.appspot.com/', {
-const socket = io('http://localhost:8080/', {
+const socket = io(URL, {
+    // const socket = io('https://karaoke-party-htn.ue.r.appspot.com/', {
+    // const socket = io('http://localhost:8080/', {
     transports: ['websocket'],
     reconnectionDelayMax: 10000000,
     // transports: ['websocket', 'polling', 'flashsocket'],

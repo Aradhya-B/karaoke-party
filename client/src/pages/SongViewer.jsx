@@ -11,6 +11,8 @@ const lrcStyle = {
     minHeight: 0,
 }
 
+import { URL } from '../config'
+
 const SongViewer = ({ username }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [currentTime, setCurrentTime] = useState(0)
@@ -113,34 +115,13 @@ const SongViewer = ({ username }) => {
                             lineIndexRef.current.toString()
                         )
                         formData.append('username', username)
-                        // formData.append(
-                        //     'name',
-                        //     `${
-                        //         // currentLineLrcRef.current.content
-                        //         weeknd.content
-                        //     } [${millisToMinutesAndSeconds(
-                        //         // currentLineLrcRef.current.millisecond
-                        //         weeknd.millisecond
-                        //     )}]`
-                        // )
-
-                        // formData.append(
-                        //     'timestamp',
-                        // millisToMinutesAndSeconds(
-                        //     currentLineLrcRef.current.millisecond
-                        // )
-                        // )
 
                         const config = {
                             headers: {
                                 'content-type': 'multipart/form-data',
                             },
                         }
-                        return axios.post(
-                            'http://localhost:8080/upload',
-                            formData,
-                            config
-                        )
+                        return axios.post(`${URL}/upload`, formData, config)
                     }
                 })
         }
