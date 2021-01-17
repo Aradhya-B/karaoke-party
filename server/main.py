@@ -14,13 +14,13 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True, manage_session=False,)
 
 class Member:
-    def __init__(self, sid, name):
+    def __init__(self, name):
         self.name = name 
-        self.sid = sid
         self.score = 0
     def toJSON(self):
-        return {"name": self.name, "socketID": self.sid, "score": self.score}
+        return {"name": self.name, "score": self.score}
 
+print("setting members")
 members = {}
 
 @app.route('/')
@@ -35,7 +35,11 @@ def upload_file():
     file = request.files['file']
     # clipname = request.form['name']
     index = int(request.form['index'])
-    username = int(request.form['username'])
+    username = request.form['username']
+
+    if (username not in members):
+        members[username] = Member(username)
+
 
     if (index > 1):
         adjusted = index - 1
@@ -51,7 +55,7 @@ def upload_file():
         
         print(score)
         members[username].score += score
-        print(username + "'s new score is: " + str(score))
+        print(username + "'s new score is: " + str(members[username].score))
     
 
         members_list = list(members.values())
@@ -59,7 +63,7 @@ def upload_file():
         for member in members_list:
             json_members_list.append(member.toJSON())
         
-        emit('updateLeaderBoard', json_members_list, broadcast=True)
+        socketio.emit('updateLeaderBoard', json_members_list, broadcast=True)
 
     return "good"
 
@@ -70,7 +74,7 @@ def new_member(sid, name):
     print(sid)
     print(name)
 
-    members[name] = Member(sid, name)
+    members[name] = Member(name)
     members_list = list(members.values())
     json_members_list = []
     for member in members_list:

@@ -12,6 +12,7 @@ import io from 'socket.io-client'
 // const socket = io('https://karaoke-party-htn.ue.r.appspot.com/', {
 const socket = io('http://localhost:8080/', {
     transports: ['websocket'],
+    reconnectionDelayMax: 10000000,
     // transports: ['websocket', 'polling', 'flashsocket'],
     // 'sync disconnect on unload': true,
 })
@@ -58,10 +59,6 @@ class Meeting extends React.Component {
     }
 
     render() {
-        const increaseScore = (value) => {
-            socket.emit('newScore', socket.id, Cookies.get('username'), value)
-        }
-
         return (
             <div className="wrapper meeting">
                 <div className="ag-header">
@@ -83,7 +80,6 @@ class Meeting extends React.Component {
                             baseMode={this.baseMode}
                             appId={this.appId}
                             uid={this.username}
-                            increaseScore={this.increaseScore}
                             socket={socket}
                         />
                     </div>

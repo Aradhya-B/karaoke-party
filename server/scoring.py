@@ -125,7 +125,7 @@ def pitchAlgorithm(userPitches, realPitches):
                 score += 1
             elif (compareNotes(realNotes[i], userNotes[i+j])):
                 score += 1
-    return score/total*100
+    return (score/max(1,total))*100
 
 
 def compareNotes(A, B):

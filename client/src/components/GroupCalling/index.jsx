@@ -36,7 +36,7 @@ const tile_canvas = {
 }
 
 /**
- * @prop appId uid increaseScore
+ * @prop appId uid
  * @prop transcode attendeeMode videoProfile channel baseMode
  */
 class AgoraCanvas extends React.Component {
