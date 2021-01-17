@@ -3,8 +3,8 @@ const MessageList = (props) => {
     if (props.memberList.length != 0) {
         props.memberList.map((member) => {
             if (document.querySelector('#ag-item-' + member.name) != null) {
-                const existing = document.getElementById(member.name + '_score')
-                if (existing) existing.remove()
+                // const existing = document.getElementById(member.name + '_score')
+                // if (existing) existing.remove()
                 var el = document.createElement('span')
 
                 //element.style
