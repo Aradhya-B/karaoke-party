@@ -6,12 +6,12 @@ import { StyledApp, MusicList, Action } from './style'
 import Music from './music'
 import sound from '../assets/songs/blinding_lights.mp3'
 import axios from 'axios'
+import { URL } from '../config'
+
 const lrcStyle = {
     flex: 1,
     minHeight: 0,
 }
-
-import { URL } from '../config'
 
 const SongViewer = ({ username }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
